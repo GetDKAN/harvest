@@ -18,7 +18,13 @@ abstract class Extract {
     $this->storage = $storage;
   }
 
-  abstract public function run();
+  /**
+   * Run the extraction.
+   *
+   * @return array
+   *   An array of php objects.
+   */
+  abstract public function run(): array;
 
   abstract public function cache();
 

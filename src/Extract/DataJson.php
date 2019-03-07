@@ -6,15 +6,19 @@ use GuzzleHttp\Client;
 
 class DataJson extends Extract {
 
-  public function run() {
+  public function run(): array
+  {
     $items = $this->storage->retrieveAll();
 
     $this->log('DEBUG', 'extract', 'Running DataJson extraction.');
 
-
     if (empty($items)) {
       $this->cache();
       $items = $this->storage->retrieveAll();
+    }
+
+    foreach($items as $key => $item) {
+      $items[$key] = json_decode($item);
     }
 
     return $items;
