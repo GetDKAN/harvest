@@ -4,7 +4,7 @@
     "type": "\\Harvest\\Extract\\DataJson",
     "uri": "http://demo.getdkan.com/data.json"
   },
-  "transforms": ["\\Harvest\\Transform\\JsonDecode"],
+  "transforms": [],
   "load": {
     "type": "\\Harvest\\Load\\Simple"
   }
