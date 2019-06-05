@@ -6,7 +6,6 @@
   "required": [
     "identifier",
     "source",
-    "transforms",
     "load"
   ],
   "properties": {
@@ -43,9 +42,7 @@
       "items": {
         "anyOf": [
           {
-            "type": [
-              "object"
-            ],
+            "type":"object",
             "title": "The Items Schema",
             "properties": {
               "Filter": {

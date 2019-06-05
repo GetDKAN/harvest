@@ -28,18 +28,19 @@ class EtlWorkerFactory {
     }
     elseif($type == "transforms") {
       $transforms = [];
+      if ($this->harvestPlan->transforms) {
+        foreach ($this->harvestPlan->transforms as $info) {
+          $config = NULL;
 
-      foreach ($this->harvestPlan->transforms as $info) {
-        $config = NULL;
-
-        if (is_object($info)) {
-          $info = (array) $info;
-          $class = array_keys($info)[0];
+          if (is_object($info)) {
+            $info = (array) $info;
+            $class = array_keys($info)[0];
+          }
+          else {
+            $class = $info;
+          }
+          $transforms[] = $this->getOne($class, $this->harvestPlan);
         }
-        else {
-          $class = $info;
-        }
-        $transforms[] = $this->getOne($class, $this->harvestPlan);
       }
 
       return $transforms;
