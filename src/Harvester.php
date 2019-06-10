@@ -44,12 +44,15 @@ class Harvester {
 
   private function transform($items) {
     $transforms = $this->factory->get("transforms");
-    foreach ($transforms as $transform) {
-      if ($this->logger) {
-        $transform->setLogger($this->logger);
+    if ($transforms) {
+      foreach ($transforms as $transform) {
+        if ($this->logger) {
+          $transform->setLogger($this->logger);
+        }
+        $transform->run($items);
       }
-      $transform->run($items);
     }
+
     return $items;
   }
 
