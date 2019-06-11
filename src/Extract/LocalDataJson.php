@@ -44,10 +44,7 @@ class LocalDataJson extends Extract {
         }
         $this->storage->store(json_encode($dataset), $id);
 
-			}
-
-		}
-
+      }
+    }
   }
-
 }
