@@ -26,9 +26,8 @@ class LocalDataJson extends Extract {
 
   public function cache() {
     $this->log('DEBUG', 'extract', 'Caching LocalDataJson files.');
-
-    $json = $this->harvest_plan->source->uri;
-    $file = file_get_contents($json);
+    
+    $file = file_get_contents($this->harvest_plan->source->uri);
     $data = json_decode($file);
 
     if ($data->dataset) {
