@@ -1,11 +1,11 @@
 <?php
 
-namespace Harvest;
+namespace Harvest\ETL;
 
 
 use Harvest\Storage\Storage;
 
-class EtlWorkerFactory {
+class Factory {
 
   private $harvestPlan;
   private $itemStorage;

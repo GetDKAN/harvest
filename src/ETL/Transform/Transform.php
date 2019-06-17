@@ -1,11 +1,10 @@
 <?php
 
-namespace Harvest\Transform;
+namespace Harvest\ETL\Transform;
 
 use Harvest\Log\MakeItLog;
 
 abstract class Transform {
-  use MakeItLog;
 
   protected $harvestPlan;
 

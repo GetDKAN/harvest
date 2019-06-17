@@ -2,12 +2,11 @@
 
 namespace Harvest;
 
-use Harvest\Log\MakeItLog;
-use Harvest\Storage\Run;
 use Harvest\Storage\Storage;
+use Harvest\ETL\Factory;
+use JsonSchema\Validator;
 
 class Harvester {
-  use MakeItLog;
 
   private $harvestPlan;
   private $runStorage;
@@ -17,7 +16,7 @@ class Harvester {
   public function __construct($harvest_plan, Storage $item_storage, Storage $hash_storage, Storage $run_storage) {
     $this->runStorage = $run_storage;
     $this->validateHarvestPlan($harvest_plan);
-    $this->factory = new EtlWorkerFactory($harvest_plan, $item_storage, $hash_storage);
+    $this->factory = new Factory($harvest_plan, $item_storage, $hash_storage);
   }
 
   public function harvest() {
@@ -34,10 +33,6 @@ class Harvester {
   private function extract() {
     $extract = $this->factory->get('extract');
 
-    if ($this->logger) {
-      $extract->setLogger($this->logger);
-    }
-
     $items = $extract->run();
     return $items;
   }
@@ -46,9 +41,6 @@ class Harvester {
     $transforms = $this->factory->get("transforms");
     if ($transforms) {
       foreach ($transforms as $transform) {
-        if ($this->logger) {
-          $transform->setLogger($this->logger);
-        }
         $transform->run($items);
       }
     }
@@ -58,9 +50,6 @@ class Harvester {
 
   private function load($items) {
     $load = $this->factory->get('load');
-    if ($this->logger) {
-      $load->setLogger($this->logger);
-    }
     return $load->run($items);
   }
 
@@ -70,7 +59,7 @@ class Harvester {
     $json_schema = file_get_contents($path_to_schema);
     $schema = json_decode($json_schema);
 
-    $validator = new \JsonSchema\Validator;
+    $validator = new Validator;
     $validator->validate($harvest_plan, $schema);
 
     $is_valid = $validator->isValid();
@@ -79,7 +68,6 @@ class Harvester {
       throw new \Exception(json_encode(['valid' => $is_valid, 'errors' => $validator->getErrors()]));
     }
     $this->harvestPlan = $harvest_plan;
-
   }
 
 }

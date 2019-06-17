@@ -1,6 +1,6 @@
 <?php
 
-namespace Harvest\Load;
+namespace Harvest\ETL\Load;
 
 
 class Simple extends Load {

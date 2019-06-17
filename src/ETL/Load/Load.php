@@ -1,13 +1,12 @@
 <?php
 
-namespace Harvest\Load;
+namespace Harvest\ETL\Load;
 
 use Harvest\Log\MakeItLog;
 use Harvest\Storage\Storage;
 use Harvest\Util;
 
 abstract class Load {
-  use MakeItLog;
 
   const NEW_ITEM = 0;
   const UPDATED_ITEM = 1;
