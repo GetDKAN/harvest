@@ -1,11 +1,14 @@
 {
   "identifier": "test",
   "source": {
-    "type": "\\Harvest\\Extract\\DataJson",
-    "uri": "http://demo.getdkan.com/data.json"
+    "type": "\\Harvest\\ETL\\Extract\\DataJson",
+    "uri": ""
   },
-  "transforms": [],
+  "transforms": [
+    "\\Harvest\\ETL\\Transform\\AddId",
+    "\\Harvest\\ETL\\Transform\\AddRandomNumber"
+  ],
   "load": {
-    "type": "\\Harvest\\Load\\Simple"
+    "type": "\\Harvest\\ETL\\Load\\Simple"
   }
 }

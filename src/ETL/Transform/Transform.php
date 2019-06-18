@@ -1,11 +1,10 @@
 <?php
 
-namespace Harvest\Transform;
+namespace Harvest\ETL\Transform;
 
 use Harvest\Log\MakeItLog;
 
 abstract class Transform {
-  use MakeItLog;
 
   protected $harvestPlan;
 
@@ -13,6 +12,5 @@ abstract class Transform {
     $this->harvestPlan = $harvest_plan;
   }
 
-  abstract function run(&$items);
-
+  abstract function run($item): object;
 }
