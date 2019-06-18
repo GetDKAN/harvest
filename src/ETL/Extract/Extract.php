@@ -12,11 +12,7 @@ abstract class Extract implements IExtract {
    */
   public function run(): array
   {
-    if (empty($this->getItemsFromCache())) {
-      $this->setItemsToCache();
-    }
-
-    $items = $this->getItemsFromCache();
+    $items = $this->getItems();
 
     if (empty($items)) {
       throw new \Exception("No Items were extracted.");
@@ -30,7 +26,5 @@ abstract class Extract implements IExtract {
     return $items;
   }
 
-  abstract public function setItemsToCache();
-
-  abstract public function getItemsFromCache();
+  abstract protected function getItems();
 }

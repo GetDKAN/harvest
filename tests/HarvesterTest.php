@@ -7,10 +7,10 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase {
   public function testPlanValidation() {
     $this->expectExceptionMessage("{\"valid\":false,\"errors\":[{\"property\":\"load.type\",\"pointer\":\"\/load\/type\",\"message\":\"The property type is required\",\"constraint\":\"required\",\"context\":1}]}");
     $plan = $this->getPlan("badplan");
-    new Harvester($plan, new MemStore(), new MemStore(), new MemStore());
+    $this->getHarvester($plan, new MemStore(), new MemStore());
   }
 
-  public function testBasicData() {
+  public function basicData() {
     return [
       ["file://" . __DIR__ . "/json/data.json"],
       ["http://demo.getdkan.com/data.json"]
@@ -18,42 +18,80 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase {
   }
 
   /**
-   * @dataProvider testBasicData
+   * @dataProvider basicData
    */
   public function testBasic($uri) {
     $plan = $this->getPlan("plan");
     $plan->source->uri = $uri;
     $item_store = new MemStore();
-    $harvester = new Harvester($plan, $item_store, new MemStore(), new MemStore());
+    $hash_store = new MemStore();
 
-    $results = $harvester->harvest();
-    $this->assertEquals(10, $results['created']);
-    $this->assertEquals(0, $results['updated']);
-    $this->assertEquals(0, $results['skipped']);
+    $harvester = $this->getHarvester($plan, $item_store, $hash_store);
 
+    $result = $harvester->harvest();
+
+    $interpreter = new \Harvest\ResultInterpreter($result);
+
+    $this->assertEquals(10, $interpreter->countCreated());
+    $this->assertEquals(0, $interpreter->countUpdated());
+    $this->assertEquals(0, $interpreter->countFailed());
+    $this->assertEquals(10, $interpreter->countProcessed());
     $this->assertEquals(10, count($item_store->retrieveAll()));
 
-    $results = $harvester->harvest();
-    $this->assertEquals(0, $results['created']);
-    $this->assertEquals(0, $results['updated']);
-    $this->assertEquals(0, $results['skipped']);
+    $result = $harvester->harvest();
+
+    $interpreter = new \Harvest\ResultInterpreter($result);
+
+    $this->assertEquals(0, $interpreter->countCreated());
+    $this->assertEquals(0, $interpreter->countUpdated());
+    $this->assertEquals(0, $interpreter->countFailed());
+    $this->assertEquals(10, $interpreter->countProcessed());
+    $this->assertEquals(10, count($item_store->retrieveAll()));
+
+    if (substr_count($uri, "file://") > 0) {
+      $plan->source->uri = str_replace("data.json", "data2.json", $uri);
+      $harvester = $this->getHarvester($plan, $item_store, $hash_store);
+
+      $result = $harvester->harvest();
+      $interpreter = new \Harvest\ResultInterpreter($result);
+
+      $this->assertEquals(1, $interpreter->countCreated());
+      $this->assertEquals(1, $interpreter->countUpdated());
+      $this->assertEquals(2, $interpreter->countFailed());
+      $this->assertEquals(10, $interpreter->countProcessed());
+      $this->assertEquals(11, count($item_store->retrieveAll()));
+    }
   }
 
   public function testBadUri() {
     $uri = "httpp://asdfnde.exo/data.json";
-    $this->expectExceptionMessage('Error reading httpp://asdfnde.exo/data.json');
 
     $plan = $this->getPlan("plan");
     $plan->source->uri = $uri;
-    $item_store = new MemStore();
-    $harvester = new Harvester($plan, $item_store, new MemStore(), new MemStore());
-    $harvester->harvest();
+
+    $harvester = $this->getHarvester($plan, new MemStore());
+    $result = $harvester->harvest();
+    $this->assertEquals("FAILURE", $result['status']['extract']);
   }
 
   private function getPlan($name) {
     $path = __DIR__ . "/json/{$name}.json";
     $content = file_get_contents($path);
     return json_decode($content);
+  }
+
+  private function getHarvester($plan, $item_store = null, $hash_store = null) {
+
+    if (!isset($item_store)) {
+      $item_store = new MemStore();
+    }
+
+    if (!isset($hash_store)) {
+      $hash_store = new MemStore();
+    }
+
+    $factory = new \Harvest\ETL\Factory($plan, $item_store, $hash_store);
+    return new Harvester($factory);
   }
 }
 

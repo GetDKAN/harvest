@@ -2,27 +2,17 @@
 
 namespace Harvest\ETL\Extract;
 
-use Dkan\Datastore\Manager\Factory;
 use GuzzleHttp\Client;
-use Harvest\Storage\Storage;
 
 class DataJson extends Extract {
 
   protected $harvest_plan;
-  protected $storage;
 
-  function __construct($harvest_plan, Storage $storage) {
+  function __construct($harvest_plan) {
     $this->harvest_plan = $harvest_plan;
-    $this->storage = $storage;
   }
 
-  public function getItemsFromCache() {
-    $items = $this->storage->retrieveAll();
-    return array_map("json_decode", $items);
-  }
-
-
-  public function setItemsToCache() {
+  public function getItems() {
     $file_location = $this->harvest_plan->source->uri;
     if (substr_count($file_location, "file://") > 0) {
       $json = file_get_contents($file_location);
@@ -41,9 +31,11 @@ class DataJson extends Extract {
       throw new \Exception("data.json does not have a dataste property");
     }
 
+    $datasets = [];
     foreach ($data->dataset as $dataset) {
-      $this->storage->store(json_encode($dataset), $this->getDatasetId($dataset));
+      $datasets[$this->getDatasetId($dataset)] = $dataset;
     }
+    return $datasets;
   }
 
   private function getDatasetId(object $dataset): string

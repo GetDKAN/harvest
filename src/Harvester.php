@@ -2,72 +2,125 @@
 
 namespace Harvest;
 
-use Harvest\Storage\Storage;
+use Harvest\ETL\Transform\Transform;
 use Harvest\ETL\Factory;
-use JsonSchema\Validator;
 
 class Harvester {
-
-  private $harvestPlan;
-  private $runStorage;
+  const HARVEST_LOAD_NEW_ITEM = 0;
+  const HARVEST_LOAD_UPDATED_ITEM = 1;
+  const HARVEST_LOAD_UNCHANGED = 2;
 
   private $factory;
 
-  public function __construct($harvest_plan, Storage $item_storage, Storage $hash_storage, Storage $run_storage) {
-    $this->runStorage = $run_storage;
-    $this->validateHarvestPlan($harvest_plan);
-    $this->factory = new Factory($harvest_plan, $item_storage, $hash_storage);
+  public function __construct(Factory $factory) {
+    $this->factory = $factory;
   }
 
   public function harvest() {
     $items = $this->extract();
-    $items = $this->transform($items);
-    $results = $this->load($items);
+
+    if (is_string($items)) {
+      $result['status']['extract'] = "FAILURE";
+      $result['errors']['extract'] = $items;
+      return $result;
+    }
+
+    $result['status']['extract'] = "SUCCESS";
+    $result['status']['extracted_items_ids'] = array_keys($items);
 
 
-    $this->runStorage->store(json_encode($results), $this->harvestPlan->identifier);
+    $result['status']['transform'] = [];
 
-    return $results;
+    $transformed_items = [];
+    $transformers = $this->factory->get("transforms");
+    if ($transformers) {
+      /** @var  $transform Transform */
+      foreach ($items as $identifier => $item) {
+        $transformed_item = clone $item;
+        foreach ($transformers as $transformer) {
+          $transformer_name = get_class($transformer);
+          $transformed_item = $this->transform($transformer, $transformed_item);
+
+          if (is_string($transformed_item)) {
+            $result['status']['transform'][$transformer_name][$identifier] = "FAILURE";
+            $result['errors']['transform'][$transformer_name][$identifier] = $transformed_item;
+            break;
+          }
+          else {
+            $result['status']['transform'][$transformer_name][$identifier] = "SUCCESS";
+          }
+        }
+
+        if (!is_string($transformed_item)) {
+          $transformed_items[$identifier] = $transformed_item;
+        }
+      }
+    }
+
+    if (empty($transformed_items)) {
+      return $result;
+    }
+
+    $result['status']['load'] = [];
+
+    foreach ($transformed_items as $identifier => $item) {
+      $status = $this->load($item);
+      if (!is_string($status)) {
+        $result['status']['load'][$identifier] = $this->loadStatusToString($status);
+      }
+      else {
+        $result['errors']['load'][$identifier] = $status;
+        $result['status']['load'][$identifier] = "FAILURE";
+      }
+    }
+
+    return $result;
   }
 
   private function extract() {
     $extract = $this->factory->get('extract');
-
-    $items = $extract->run();
-    return $items;
-  }
-
-  private function transform($items) {
-    $transforms = $this->factory->get("transforms");
-    if ($transforms) {
-      foreach ($transforms as $transform) {
-        $transform->run($items);
-      }
+    try {
+      $items = $extract->run();
+    }
+    catch(\Exception $e) {
+      return $e->getMessage();
     }
 
     return $items;
   }
 
-  private function load($items) {
-    $load = $this->factory->get('load');
-    return $load->run($items);
-  }
+  private function transform($transformer, $item) {
+    $transformed = clone $item;
 
-  private function validateHarvestPlan($harvest_plan) {
-
-    $path_to_schema = __DIR__ . "/../schema/schema.json";
-    $json_schema = file_get_contents($path_to_schema);
-    $schema = json_decode($json_schema);
-
-    $validator = new Validator;
-    $validator->validate($harvest_plan, $schema);
-
-    $is_valid = $validator->isValid();
-
-    if (!$is_valid) {
-      throw new \Exception(json_encode(['valid' => $is_valid, 'errors' => $validator->getErrors()]));
+    try {
+      $transformed = $transformer->run($transformed);
     }
-    $this->harvestPlan = $harvest_plan;
+    catch(\Exception $e) {
+      return $e->getMessage();
+    }
+
+    return $transformed;
   }
 
+  private function load($item) {
+    try {
+      $load = $this->factory->get('load');
+      return $load->run($item);
+    }
+    catch (\Exception $e) {
+      return $e->getMessage();
+    }
+  }
+
+  private function loadStatusToString($status) {
+    if ($status === self::HARVEST_LOAD_NEW_ITEM) {
+      return "NEW";
+    }
+    else if ($status === self::HARVEST_LOAD_UPDATED_ITEM) {
+      return "UPDATED";
+    }
+    else if ($status === self::HARVEST_LOAD_UNCHANGED) {
+      return "UNCHANGED";
+    }
+  }
 }

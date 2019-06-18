@@ -12,6 +12,5 @@ abstract class Transform {
     $this->harvestPlan = $harvest_plan;
   }
 
-  abstract function run(&$items);
-
+  abstract function run($item): object;
 }
