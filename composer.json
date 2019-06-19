@@ -19,7 +19,7 @@
     ],
     "require": {
         "fmizzell/contracts": "dev-master",
-        "justinrainbow/json-schema": "^5.2",
-        "guzzlehttp/guzzle": "^6.3"
+        "guzzlehttp/guzzle": "^6.3",
+        "opis/json-schema": "^1.0"
     }
 }

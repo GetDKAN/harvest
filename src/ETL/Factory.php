@@ -3,7 +3,9 @@
 namespace Harvest\ETL;
 
 use Harvest\Storage\Storage;
-use JsonSchema\Validator;
+use Opis\JsonSchema\{
+  Validator, ValidationResult, ValidationError, Schema
+};
 
 class Factory {
 
@@ -54,20 +56,27 @@ class Factory {
     return new $class($config);
   }
 
-  private function validateHarvestPlan($harvest_plan) {
-
+  private function validateHarvestPlan(object $harvest_plan) {
     $path_to_schema = __DIR__ . "/../../schema/schema.json";
     $json_schema = file_get_contents($path_to_schema);
     $schema = json_decode($json_schema);
 
-    $validator = new Validator;
-    $validator->validate($harvest_plan, $schema);
-
-    $is_valid = $validator->isValid();
-
-    if (!$is_valid) {
-      throw new \Exception(json_encode(['valid' => $is_valid, 'errors' => $validator->getErrors()]));
+    if ($schema == null) {
+      throw new \Exception("the json-schema is invalid json.");
     }
+
+    $data = $harvest_plan;
+    $schema = Schema::fromJsonString($json_schema);
+    $validator = new Validator();
+
+    /** @var ValidationResult $result */
+    $result = $validator->schemaValidation($data, $schema);
+
+    if (!$result->isValid()) {
+      $error = $result->getFirstError();
+      throw new \Exception("Invalid harvest plan. " . implode("->", $error->dataPointer()) . " " . json_encode($error->keywordArgs()));
+    }
+
     $this->harvestPlan = $harvest_plan;
   }
 

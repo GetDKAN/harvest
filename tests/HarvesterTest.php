@@ -5,7 +5,7 @@ use Harvest\Harvester;
 class HarvesterTest extends \PHPUnit\Framework\TestCase {
 
   public function testPlanValidation() {
-    $this->expectExceptionMessage("{\"valid\":false,\"errors\":[{\"property\":\"load.type\",\"pointer\":\"\/load\/type\",\"message\":\"The property type is required\",\"constraint\":\"required\",\"context\":1}]}");
+    $this->expectExceptionMessage("Invalid harvest plan. load {\"missing\":\"type\"}");
     $plan = $this->getPlan("badplan");
     $this->getHarvester($plan, new MemStore(), new MemStore());
   }
