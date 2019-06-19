@@ -14,7 +14,9 @@ class Factory {
   private $hashStorage;
 
   public function __construct($harvest_plan, Storage $item_storage, Storage $hash_storage) {
-    $this->validateHarvestPlan($harvest_plan);
+    if (self::validateHarvestPlan($harvest_plan)) {
+      $this->harvestPlan = $harvest_plan;
+    }
     $this->itemStorage = $item_storage;
     $this->hashStorage = $hash_storage;
   }
@@ -56,7 +58,7 @@ class Factory {
     return new $class($config);
   }
 
-  private function validateHarvestPlan(object $harvest_plan) {
+  public static function validateHarvestPlan(object $harvest_plan) {
     $path_to_schema = __DIR__ . "/../../schema/schema.json";
     $json_schema = file_get_contents($path_to_schema);
     $schema = json_decode($json_schema);
@@ -69,15 +71,16 @@ class Factory {
     $schema = Schema::fromJsonString($json_schema);
     $validator = new Validator();
 
-    /** @var ValidationResult $result */
+    /** @var $result ValidationResult */
     $result = $validator->schemaValidation($data, $schema);
 
     if (!$result->isValid()) {
+      /** @var $error ValidationError */
       $error = $result->getFirstError();
       throw new \Exception("Invalid harvest plan. " . implode("->", $error->dataPointer()) . " " . json_encode($error->keywordArgs()));
     }
 
-    $this->harvestPlan = $harvest_plan;
+    return TRUE;
   }
 
 }
