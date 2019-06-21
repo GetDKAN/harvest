@@ -9,9 +9,9 @@ use Opis\JsonSchema\{
 
 class Factory {
 
-  private $harvestPlan;
-  private $itemStorage;
-  private $hashStorage;
+  public $harvestPlan;
+  public $itemStorage;
+  public $hashStorage;
 
   public function __construct($harvest_plan, Storage $item_storage, Storage $hash_storage) {
     if (self::validateHarvestPlan($harvest_plan)) {
@@ -22,12 +22,23 @@ class Factory {
   }
 
   public function get($type) {
+
     if ($type == "extract") {
-      $class = $this->harvestPlan->source->type;
+      $class = $this->harvestPlan->extract->type;
+
+      if (!class_exists($class)) {
+        throw new \Exception("Class {$class} does not exist");
+      }
+
       return new $class($this->harvestPlan);
     }
     elseif ($type == "load") {
       $class = $this->harvestPlan->load->type;
+
+      if (!class_exists($class)) {
+        throw new \Exception("Class {$class} does not exist");
+      }
+
       return  new $class($this->harvestPlan, $this->hashStorage, $this->itemStorage);
     }
     elseif($type == "transforms") {
@@ -35,14 +46,12 @@ class Factory {
       if ($this->harvestPlan->transforms) {
         foreach ($this->harvestPlan->transforms as $info) {
           $config = NULL;
+          $class = $info;
 
-          if (is_object($info)) {
-            $info = (array) $info;
-            $class = array_keys($info)[0];
+          if (!class_exists($class)) {
+            throw new \Exception("Class {$class} does not exist");
           }
-          else {
-            $class = $info;
-          }
+
           $transforms[] = $this->getOne($class, $this->harvestPlan);
         }
       }
@@ -58,14 +67,13 @@ class Factory {
     return new $class($config);
   }
 
-  public static function validateHarvestPlan(object $harvest_plan) {
+  public static function validateHarvestPlan($harvest_plan) {
+    if (!is_object($harvest_plan)) {
+      throw new \Exception("Harvest plan must be a php object.");
+    }
+
     $path_to_schema = __DIR__ . "/../../schema/schema.json";
     $json_schema = file_get_contents($path_to_schema);
-    $schema = json_decode($json_schema);
-
-    if ($schema == null) {
-      throw new \Exception("the json-schema is invalid json.");
-    }
 
     $data = $harvest_plan;
     $schema = Schema::fromJsonString($json_schema);

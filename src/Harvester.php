@@ -16,8 +16,23 @@ class Harvester {
     $this->factory = $factory;
   }
 
+  public function revert() {
+    $ids = array_keys($this->factory->hashStorage->retrieveAll());
+    $load = $this->factory->get("load");
+    $counter = 0;
+    foreach($ids as $id) {
+      if (method_exists($load, "removeItem")) {
+        $load->removeItem($id);
+        $this->factory->hashStorage->remove($id);
+        $counter++;
+      }
+    }
+    return $counter;
+  }
+
   public function harvest() {
     $items = $this->extract();
+    $result['plan'] = json_encode($this->factory->harvestPlan);
 
     if (is_string($items)) {
       $result['status']['extract'] = "FAILURE";
@@ -32,7 +47,13 @@ class Harvester {
     $result['status']['transform'] = [];
 
     $transformed_items = [];
-    $transformers = $this->factory->get("transforms");
+    try {
+      $transformers = $this->factory->get("transforms");
+    }
+    catch (\Exception $e) {
+      $result['errors']['transform']['loading'] = $e->getMessage();
+    }
+
     if ($transformers) {
       /** @var  $transform Transform */
       foreach ($items as $identifier => $item) {
@@ -56,6 +77,9 @@ class Harvester {
         }
       }
     }
+    else {
+      $transformed_items = $items;
+    }
 
     if (empty($transformed_items)) {
       return $result;
@@ -78,8 +102,8 @@ class Harvester {
   }
 
   private function extract() {
-    $extract = $this->factory->get('extract');
     try {
+      $extract = $this->factory->get('extract');
       $items = $extract->run();
     }
     catch(\Exception $e) {

@@ -22,7 +22,7 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase {
    */
   public function testBasic($uri) {
     $plan = $this->getPlan("plan");
-    $plan->source->uri = $uri;
+    $plan->extract->uri = $uri;
     $item_store = new MemStore();
     $hash_store = new MemStore();
 
@@ -49,7 +49,7 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase {
     $this->assertEquals(10, count($item_store->retrieveAll()));
 
     if (substr_count($uri, "file://") > 0) {
-      $plan->source->uri = str_replace("data.json", "data2.json", $uri);
+      $plan->extract->uri = str_replace("data.json", "data2.json", $uri);
       $harvester = $this->getHarvester($plan, $item_store, $hash_store);
 
       $result = $harvester->harvest();
@@ -61,13 +61,24 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase {
       $this->assertEquals(10, $interpreter->countProcessed());
       $this->assertEquals(11, count($item_store->retrieveAll()));
     }
+
+    $harvester->revert();
+
+    if (substr_count($uri, "file://") > 0) {
+      $expected = 1;
+    }
+    else {
+      $expected = 0;
+    }
+
+    $this->assertEquals($expected, count($item_store->retrieveAll()));
   }
 
   public function testBadUri() {
     $uri = "httpp://asdfnde.exo/data.json";
 
     $plan = $this->getPlan("plan");
-    $plan->source->uri = $uri;
+    $plan->extract->uri = $uri;
 
     $harvester = $this->getHarvester($plan, new MemStore());
     $result = $harvester->harvest();

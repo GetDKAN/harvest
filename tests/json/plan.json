@@ -1,6 +1,6 @@
 {
   "identifier": "test",
-  "source": {
+  "extract": {
     "type": "\\Harvest\\ETL\\Extract\\DataJson",
     "uri": ""
   },

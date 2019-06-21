@@ -3,6 +3,7 @@
 namespace Harvest\ETL\Extract;
 
 use GuzzleHttp\Client;
+use Harvest\Util;
 
 class DataJson extends Extract {
 
@@ -13,7 +14,7 @@ class DataJson extends Extract {
   }
 
   public function getItems() {
-    $file_location = $this->harvest_plan->source->uri;
+    $file_location = $this->harvest_plan->extract->uri;
     if (substr_count($file_location, "file://") > 0) {
       $json = file_get_contents($file_location);
     }
@@ -33,21 +34,9 @@ class DataJson extends Extract {
 
     $datasets = [];
     foreach ($data->dataset as $dataset) {
-      $datasets[$this->getDatasetId($dataset)] = $dataset;
+      $datasets[Util::getDatasetId($dataset)] = $dataset;
     }
     return $datasets;
-  }
-
-  private function getDatasetId(object $dataset): string
-  {
-    if (filter_var($dataset->identifier, FILTER_VALIDATE_URL)) {
-      $i = explode("/", $dataset->identifier);
-      $id = end($i);
-    }
-    else {
-      $id = $dataset->identifier;
-    }
-    return "{$id}";
   }
 
   private function httpRequest($uri) {
