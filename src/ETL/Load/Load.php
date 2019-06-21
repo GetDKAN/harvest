@@ -29,7 +29,7 @@ abstract class Load {
 
       $this->saveItem($item);
 
-      $identifier = $item->identifier;
+      $identifier = Util::getDatasetId($item);
 
       $hash = Util::generateHash($item);
       $object = (object) ['harvest_plan_id' => $this->harvestPlan->identifier, "hash" => $hash];
@@ -41,7 +41,7 @@ abstract class Load {
 
   private function itemState($item) {
     if (isset($item->identifier)) {
-      $identifier = $item->identifier;
+      $identifier = Util::getDatasetId($item);
 
       $json = $this->hashStorage->retrieve($identifier);
 
