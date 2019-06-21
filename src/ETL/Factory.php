@@ -46,14 +46,7 @@ class Factory {
       if ($this->harvestPlan->transforms) {
         foreach ($this->harvestPlan->transforms as $info) {
           $config = NULL;
-
-          if (is_object($info)) {
-            $info = (array) $info;
-            $class = array_keys($info)[0];
-          }
-          else {
-            $class = $info;
-          }
+          $class = $info;
 
           if (!class_exists($class)) {
             throw new \Exception("Class {$class} does not exist");
@@ -81,11 +74,6 @@ class Factory {
 
     $path_to_schema = __DIR__ . "/../../schema/schema.json";
     $json_schema = file_get_contents($path_to_schema);
-    $schema = json_decode($json_schema);
-
-    if ($schema == null) {
-      throw new \Exception("the json-schema is invalid json.");
-    }
 
     $data = $harvest_plan;
     $schema = Schema::fromJsonString($json_schema);

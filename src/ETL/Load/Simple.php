@@ -12,4 +12,9 @@ class Simple extends Load {
     }
     $this->itemStorage->store(json_encode($item), $id);
   }
+
+  public function removeItem($id)
+  {
+    $this->itemStorage->remove($id);
+  }
 }
