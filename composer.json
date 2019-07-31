@@ -1,5 +1,5 @@
 {
-    "name": "fmizzell/harvest",
+    "name": "getdkan/harvest",
     "description": "Drupal-independent version of the Harvest functionality from DKAN",
     "type": "library",
     "autoload": {
