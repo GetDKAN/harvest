@@ -2,7 +2,6 @@
 
 namespace Harvest\Storage;
 
-
 use Contracts\BulkRetriever;
 use Contracts\Storage as CStorage;
 
