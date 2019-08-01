@@ -2,7 +2,7 @@
 
 namespace Harvest\ETL;
 
-use Harvest\Storage\Storage;
+use Harvest\Storage\StorageInterface;
 use Opis\JsonSchema\Validator;
 use Opis\JsonSchema\ValidationResult;
 use Opis\JsonSchema\ValidationError;
@@ -15,7 +15,11 @@ class Factory
     public $itemStorage;
     public $hashStorage;
 
-    public function __construct($harvest_plan, Storage $item_storage, Storage $hash_storage)
+    public function __construct(
+        $harvest_plan,
+        StorageInterface $item_storage,
+        StorageInterface $hash_storage
+    )
     {
         if (self::validateHarvestPlan($harvest_plan)) {
             $this->harvestPlan = $harvest_plan;

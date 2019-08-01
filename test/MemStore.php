@@ -3,9 +3,9 @@
 namespace HarvestTest;
 
 use Contracts\Mock\Storage\Memory;
-use Harvest\Storage\Storage;
+use Harvest\Storage\StorageInterface;
 
-class MemStore extends Memory implements Storage
+class MemStore extends Memory implements StorageInterface
 {
 
 }

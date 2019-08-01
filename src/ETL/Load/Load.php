@@ -4,7 +4,7 @@ namespace Harvest\ETL\Load;
 
 use Harvest\Harvester;
 use Harvest\Log\MakeItLog;
-use Harvest\Storage\Storage;
+use Harvest\Storage\StorageInterface;
 use Harvest\Util;
 
 abstract class Load
@@ -16,7 +16,11 @@ abstract class Load
 
     abstract protected function saveItem($item);
 
-    public function __construct($harvest_plan, Storage $hash_storage, Storage $item_storage)
+    public function __construct(
+        $harvest_plan,
+        StorageInterface $hash_storage,
+        StorageInterface $item_storage
+    )
     {
         $this->harvestPlan = $harvest_plan;
         $this->hashStorage = $hash_storage;

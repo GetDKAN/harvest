@@ -2,6 +2,9 @@
 
 namespace HarvestTest\ETL;
 
+use HarvestTest\MemStore;
+use Harvest\ETL\Factory;
+
 class FactoryTest extends \PHPUnit\Framework\TestCase
 {
     public function testExtract()
@@ -25,12 +28,12 @@ class FactoryTest extends \PHPUnit\Framework\TestCase
     public function testPlanCheck()
     {
         $this->expectExceptionMessage("Harvest plan must be a php object.");
-        new \Harvest\ETL\Factory("hello", new MemStore(), new MemStore());
+        new Factory("hello", new MemStore(), new MemStore());
     }
 
     private function getFactory()
     {
-        return new \Harvest\ETL\Factory($this->getPlan("badplan2"), new MemStore(), new MemStore());
+        return new Factory($this->getPlan("badplan2"), new MemStore(), new MemStore());
     }
 
     private function getPlan($name)
