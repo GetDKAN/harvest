@@ -4,13 +4,15 @@ namespace Harvest\ETL\Transform;
 
 use Harvest\Log\MakeItLog;
 
-abstract class Transform {
+abstract class Transform
+{
 
-  protected $harvestPlan;
+    protected $harvestPlan;
 
-  function __construct($harvest_plan) {
-    $this->harvestPlan = $harvest_plan;
-  }
+    public function __construct($harvest_plan)
+    {
+        $this->harvestPlan = $harvest_plan;
+    }
 
-  abstract function run($item);
+    abstract public function run($item);
 }
