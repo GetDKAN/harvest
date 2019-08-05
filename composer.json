@@ -18,7 +18,7 @@
         }
     ],
     "require": {
-        "fmizzell/contracts": "~0.0.2",
+        "getdkan/contracts": "~0.0.2",
         "guzzlehttp/guzzle": "~6.3",
         "opis/json-schema": "~1.0"
     }
