@@ -20,8 +20,7 @@ abstract class Load
         $harvest_plan,
         $hash_storage,
         $item_storage
-    )
-    {
+    ) {
         $this->harvestPlan = $harvest_plan;
         $this->hashStorage = $hash_storage;
         $this->itemStorage = $item_storage;

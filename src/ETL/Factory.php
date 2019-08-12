@@ -19,8 +19,7 @@ class Factory
         $harvest_plan,
         $item_storage,
         $hash_storage
-    )
-    {
+    ) {
         if (self::validateHarvestPlan($harvest_plan)) {
             $this->harvestPlan = $harvest_plan;
         }
