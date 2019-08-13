@@ -17,10 +17,9 @@ class Factory
 
     public function __construct(
         $harvest_plan,
-        StorageInterface $item_storage,
-        StorageInterface $hash_storage
-    )
-    {
+        $item_storage,
+        $hash_storage
+    ) {
         if (self::validateHarvestPlan($harvest_plan)) {
             $this->harvestPlan = $harvest_plan;
         }
@@ -49,7 +48,7 @@ class Factory
             return  new $class($this->harvestPlan, $this->hashStorage, $this->itemStorage);
         } elseif ($type == "transforms") {
             $transforms = [];
-            if ($this->harvestPlan->transforms) {
+            if (isset($this->harvestPlan->transforms)) {
                 foreach ($this->harvestPlan->transforms as $info) {
                     $config = null;
                     $class = $info;

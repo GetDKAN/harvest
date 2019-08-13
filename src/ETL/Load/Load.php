@@ -18,10 +18,9 @@ abstract class Load
 
     public function __construct(
         $harvest_plan,
-        StorageInterface $hash_storage,
-        StorageInterface $item_storage
-    )
-    {
+        $hash_storage,
+        $item_storage
+    ) {
         $this->harvestPlan = $harvest_plan;
         $this->hashStorage = $hash_storage;
         $this->itemStorage = $item_storage;
