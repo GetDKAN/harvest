@@ -13,7 +13,7 @@
     },
     "require": {
         "getdkan/contracts": "~0.1.0",
-        "guzzlehttp/guzzle": ~6.3",
+        "guzzlehttp/guzzle": "~6.3",
         "opis/json-schema": "~1.0"
     }
 }
