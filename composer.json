@@ -8,12 +8,12 @@
             "HarvestTest\\": "test/"
         }
     },
-    "require-dev": {
-        "phpunit/phpunit": "^7.5"
-    },
     "require": {
         "getdkan/contracts": "~0.1.0",
         "guzzlehttp/guzzle": "~6.3",
         "opis/json-schema": "~1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.5"
     }
 }
