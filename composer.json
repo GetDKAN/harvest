@@ -9,7 +9,7 @@
         }
     },
     "require": {
-        "getdkan/contracts": "~0.1.0",
+        "getdkan/contracts": "dev-loosen-storage-contracts",
         "guzzlehttp/guzzle": "~6.3",
         "opis/json-schema": "~1.0"
     },
