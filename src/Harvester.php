@@ -20,7 +20,7 @@ class Harvester
 
     public function revert()
     {
-        $ids = array_keys($this->factory->hashStorage->retrieveAll());
+        $ids = $this->factory->hashStorage->retrieveAll();
         $load = $this->factory->get("load");
         $counter = 0;
         foreach ($ids as $id) {

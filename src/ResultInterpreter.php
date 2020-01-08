@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Harvest;
 
 class ResultInterpreter
