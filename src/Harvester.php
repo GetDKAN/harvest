@@ -22,14 +22,18 @@ class Harvester
     {
         $ids = $this->factory->hashStorage->retrieveAll();
         $load = $this->factory->get("load");
+
+        if (!method_exists($load, "removeItem")) {
+            throw new \Exception("Load of class " . get_class($load) . " does not implement the removeItem method.");
+        }
+
         $counter = 0;
         foreach ($ids as $id) {
-            if (method_exists($load, "removeItem")) {
-                $load->removeItem($id);
-                $this->factory->hashStorage->remove($id);
-                $counter++;
-            }
+            $load->removeItem($id);
+            $this->factory->hashStorage->remove($id);
+            $counter++;
         }
+
         return $counter;
     }
 
