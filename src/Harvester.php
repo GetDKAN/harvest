@@ -136,6 +136,10 @@ class Harvester
             $load = $this->factory->get('load');
             return $load->run($item);
         } catch (\Exception $e) {
+            if (method_exists($e, 'getResult')) {
+                $result = $e->getResult();
+                return json_encode($result->getErrors());
+            }
             return $e->getMessage();
         }
     }
