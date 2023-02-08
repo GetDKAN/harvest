@@ -4,7 +4,7 @@ jobs:
     environment:
       CC_TEST_REPORTER_ID: 28eb57ab63aa0163f21d341acfc023bb4ea9e49b8db17ba440e99c9a16007700
     docker:
-      - image: cimg/php:8.2.1
+      - image: cimg/php:7.4
     working_directory: ~/repo
     steps:
       - checkout
