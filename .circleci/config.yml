@@ -11,12 +11,13 @@ jobs:
       - run:
           name: Setup dependencies
           command: |
-            sudo docker-php-source extract
-            sudo docker-php-ext-install xdebug
-            docker-php-source delete
+            #sudo docker-php-source extract
+            #sudo docker-php-ext-install xdebug
+            #docker-php-source delete
+            php -i
             sudo composer self-update
             composer install -n --prefer-dist
-            sudo docker-php-ext-enable xdebug
+            #sudo docker-php-ext-enable xdebug
       - run:
           name: Setup Code Climate test-reporter
           command: |
