@@ -128,7 +128,6 @@ workflows:
   all-tests:
     jobs:
       - harvest-test:
-          test-command: test-coverage-ci
           matrix:
             parameters:
               version: [ "7.3", "7.4", "8.0", "8.1"]
