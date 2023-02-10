@@ -118,12 +118,11 @@ jobs:
           app-dir: <<parameters.app-dir>>
           cache-key: composer.json
           install-flags: <<parameters.install-flags>>
-      - steps:
-        - run:
-            name: Run Tests
-            working_directory: <<parameters.app-dir>>
-            command: |
-              composer <<parameters.test-command>>
+      - run:
+          name: Run Tests
+          working_directory: <<parameters.app-dir>>
+          command: |
+            composer <<parameters.test-command>>
 
 workflows:
   all-tests:
