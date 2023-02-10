@@ -11,8 +11,10 @@ jobs:
       - run:
           name: Setup dependencies
           command: |
+            sudo -E install-php-extensions xdebug
             sudo composer self-update
             composer install -n --prefer-dist
+            sudo docker-php-ext-enable xdebug
       - run:
           name: Setup Code Climate test-reporter
           command: |
