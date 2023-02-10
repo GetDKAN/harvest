@@ -11,6 +11,7 @@ jobs:
       - run:
           name: Setup dependencies
           command: |
+            sudo install-php-extensions xdebug
             #sudo docker-php-source extract
             #sudo docker-php-ext-install xdebug
             #docker-php-source delete
