@@ -18,7 +18,7 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
     {
         return [
         ["file://" . __DIR__ . "/json/data.json"],
-        ["http://demo.getdkan.com/data.json"]
+        ["https://demo.getdkan.org/data.json"]
         ];
     }
 
