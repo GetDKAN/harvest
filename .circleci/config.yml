@@ -1,11 +1,10 @@
 # PHPUnit Composer min/max test.
+# TODO: Make our own orb out of this.
 
 version: 2.1
 orbs:
   php: circleci/php@1.1.0
 
-# Command update-packages copied almost verbatim from the PHP orb's
-# install-packages.
 commands:
   update-packages:
     description: |
@@ -83,26 +82,66 @@ commands:
           name: Install XDebug
           command: sudo -E install-php-extensions xdebug && sudo -E docker-php-ext-enable xdebug
 
-jobs:
-  harvest-test:
+  install-cc-test-reporter:
+    # TODO: Parameterize location.
+    steps:
+      - run:
+          name: Install Codeclimate test reporter
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+
+  run-phpunit-tests:
     description: |
       Run PHPUnit tests.
-    executor:
-      name: php/default
-      tag: << parameters.version >>
     parameters:
       app-dir:
         default: ~/project
         description: Path to the directory containing your composer.json file. Not needed if composer.json lives in the root.
         type: string
-      setup:
-        default: [ ]
-        description: Provide any optional steps you would like to run prior to installing the composer packages. This is a good place to install global packages.
-        type: steps
+      install-flags:
+        default: ""
+        description: Arguments to `composer update`.
+        type: string
       test-command:
         default: test
         description: The name of the script within your composer.json which will run your tests.
         type: string
+      report-to-codeclimate:
+        type: boolean
+        default: false
+        description: Report coverage info to Codeclimate.
+    steps:
+      - checkout
+      - update-packages:
+          app-dir: <<parameters.app-dir>>
+          cache-key: composer.json
+          install-flags: <<parameters.install-flags>>
+      - when:
+          condition: <<parameters.report-to-codeclimate>>
+          steps:
+            - install-xdebug
+            - install-cc-test-reporter
+            - run: |
+                ./cc-test-reporter before-build
+                XDEBUG_MODE=coverage composer <<parameters.test-command>> -- --coverage-clover clover.xml
+                ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?
+      - when:
+          condition:
+            not: <<parameters.report-to-codeclimate>>
+          steps:
+            - run: |
+                XDEBUG_MODE=off composer <<parameters.test-command>>
+
+jobs:
+  matrix-conditions:
+    environment:
+      CC_TEST_REPORTER_ID: 28eb57ab63aa0163f21d341acfc023bb4ea9e49b8db17ba440e99c9a16007700
+    description: Run tests for matrix
+    executor:
+      name: php/default
+      tag: << parameters.version >>
+    parameters:
       version:
         default: "7.4"
         description: The `cimg/php` Docker image version tag.
@@ -112,23 +151,30 @@ jobs:
         description: Arguments to `composer update`.
         type: string
     steps:
-      - checkout
-      - steps: << parameters.setup >>
-      - update-packages:
-          app-dir: <<parameters.app-dir>>
-          cache-key: composer.json
-          install-flags: <<parameters.install-flags>>
-      - run:
-          name: Run Tests
-          working_directory: <<parameters.app-dir>>
-          command: |
-            composer <<parameters.test-command>>
+      - when:
+          condition:
+            and:
+              - equal: [ "8.1", <<parameters.version>> ]
+              - equal: [ "", <<parameters.install-flags>> ]
+          steps:
+            - run-phpunit-tests:
+                report-to-codeclimate: true
+                install-flags: << parameters.install-flags >>
+      - when:
+          condition:
+            not:
+              and:
+                - equal: [ "8.1", <<parameters.version>> ]
+                - equal: [ "", <<parameters.install-flags>> ]
+          steps:
+            - run-phpunit-tests:
+                install-flags: << parameters.install-flags >>
 
 workflows:
   all-tests:
     jobs:
-      - harvest-test:
+      - matrix-conditions:
           matrix:
             parameters:
-              version: [ "7.3", "7.4", "8.0", "8.1"]
-              install-flags: ["", "--prefer-lowest"]
+              version: [ "7.4", "8.0", "8.1" ]
+              install-flags: [ "", "--prefer-lowest" ]
