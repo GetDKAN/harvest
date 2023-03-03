@@ -11,5 +11,4 @@ class MemStore extends Memory implements StorageInterface
     {
         return array_keys(parent::retrieveAll());
     }
-
 }
