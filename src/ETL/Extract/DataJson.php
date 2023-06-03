@@ -15,7 +15,10 @@ class DataJson extends Extract
         $this->harvest_plan = $harvest_plan;
     }
 
-    public function getItems()
+    /**
+     * @return array<string, mixed>
+     */
+    public function getItems(): array
     {
         $file_location = $this->harvest_plan->extract->uri;
         if (substr_count($file_location, "file://") > 0) {
@@ -46,8 +49,7 @@ class DataJson extends Extract
         try {
             $client = new Client();
             $res = $client->get($uri);
-            $data = (string) $res->getBody();
-            return $data;
+            return (string) $res->getBody();
         } catch (\Exception $exception) {
             throw new \Exception("Error reading {$uri}");
         }

@@ -6,7 +6,7 @@ use Harvest\ETL\Extract\Extract;
 
 class TestExtract extends Extract
 {
-    protected function getItems()
+    protected function getItems(): array
     {
         return [];
     }

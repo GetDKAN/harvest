@@ -50,7 +50,6 @@ class Factory
             $transforms = [];
             if (isset($this->harvestPlan->transforms)) {
                 foreach ($this->harvestPlan->transforms as $info) {
-                    $config = null;
                     $class = $info;
 
                     if (!class_exists($class)) {
@@ -65,7 +64,7 @@ class Factory
         }
     }
 
-    private function getOne($class, $config = null)
+    private function getOne(string $class, $config = null)
     {
         if (!$config) {
             $config = $this->harvestPlan;
@@ -73,7 +72,7 @@ class Factory
         return new $class($config);
     }
 
-    public static function validateHarvestPlan($harvest_plan)
+    public static function validateHarvestPlan($harvest_plan): bool
     {
         if (!is_object($harvest_plan)) {
             throw new \Exception("Harvest plan must be a php object.");
