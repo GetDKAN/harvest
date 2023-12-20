@@ -2,12 +2,14 @@
 
 namespace HarvestTest;
 
-class UtilTest extends \PHPUnit\Framework\TestCase
+use PHPUnit\Framework\TestCase;
+use Harvest\Util;
+class UtilTest extends TestCase
 {
-    public function test()
+    public function test(): void
     {
         $fake_dataset = "Not an object";
         $this->expectExceptionMessage("The dataset " . json_encode($fake_dataset) . " is not an object.");
-        \Harvest\Util::getDatasetId($fake_dataset);
+        Util::getDatasetId($fake_dataset);
     }
 }

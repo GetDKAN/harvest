@@ -7,11 +7,11 @@ use Harvest\ETL\Factory;
 
 class Harvester
 {
-    const HARVEST_LOAD_NEW_ITEM = 0;
-    const HARVEST_LOAD_UPDATED_ITEM = 1;
-    const HARVEST_LOAD_UNCHANGED = 2;
+    public const HARVEST_LOAD_NEW_ITEM = 0;
+    public const HARVEST_LOAD_UPDATED_ITEM = 1;
+    public const HARVEST_LOAD_UNCHANGED = 2;
 
-    private $factory;
+    private Factory $factory;
 
     public function __construct(Factory $factory)
     {
@@ -39,6 +39,8 @@ class Harvester
 
     public function harvest()
     {
+        $result = [];
+        $transformers = null;
         $items = $this->extract();
         $result['plan'] = json_encode($this->factory->harvestPlan);
 

@@ -2,19 +2,22 @@
 
 namespace HarvestTest;
 
+use PHPUnit\Framework\TestCase;
+use Harvest\ResultInterpreter;
+use Harvest\ETL\Factory;
 use Harvest\Harvester;
 
-class HarvesterTest extends \PHPUnit\Framework\TestCase
+class HarvesterTest extends TestCase
 {
 
-    public function testPlanValidation()
+    public function testPlanValidation(): void
     {
         $this->expectExceptionMessage("Invalid harvest plan. load {\"missing\":\"type\"}");
         $plan = $this->getPlan("badplan");
         $this->getHarvester($plan, new MemStore(), new MemStore());
     }
 
-    public function basicData()
+    public function basicData(): array
     {
         return [
         ["file://" . __DIR__ . "/json/data.json"],
@@ -25,7 +28,7 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
   /**
    * @dataProvider basicData
    */
-    public function testBasic($uri)
+    public function testBasic(string $uri): void
     {
         $plan = $this->getPlan("plan");
         $plan->extract->uri = $uri;
@@ -36,7 +39,7 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
 
         $result = $harvester->harvest();
 
-        $interpreter = new \Harvest\ResultInterpreter($result);
+        $interpreter = new ResultInterpreter($result);
 
         $this->assertEquals(10, $interpreter->countCreated());
         $this->assertEquals(0, $interpreter->countUpdated());
@@ -46,7 +49,7 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
 
         $result = $harvester->harvest();
 
-        $interpreter = new \Harvest\ResultInterpreter($result);
+        $interpreter = new ResultInterpreter($result);
 
         $this->assertEquals(0, $interpreter->countCreated());
         $this->assertEquals(0, $interpreter->countUpdated());
@@ -59,7 +62,7 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
             $harvester = $this->getHarvester($plan, $item_store, $hash_store);
 
             $result = $harvester->harvest();
-            $interpreter = new \Harvest\ResultInterpreter($result);
+            $interpreter = new ResultInterpreter($result);
 
             $this->assertEquals(1, $interpreter->countCreated());
             $this->assertEquals(1, $interpreter->countUpdated());
@@ -79,7 +82,7 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, count($item_store->retrieveAll()));
     }
 
-    public function testBadUri()
+    public function testBadUri(): void
     {
         $uri = "httpp://asdfnde.exo/data.json";
 
@@ -91,14 +94,14 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals("FAILURE", $result['status']['extract']);
     }
 
-    private function getPlan($name)
+    private function getPlan(string $name)
     {
         $path = __DIR__ . "/json/{$name}.json";
         $content = file_get_contents($path);
         return json_decode($content);
     }
 
-    private function getHarvester($plan, $item_store = null, $hash_store = null)
+    private function getHarvester($plan, $item_store = null, $hash_store = null): Harvester
     {
 
         if (!isset($item_store)) {
@@ -109,7 +112,7 @@ class HarvesterTest extends \PHPUnit\Framework\TestCase
             $hash_store = new MemStore();
         }
 
-        $factory = new \Harvest\ETL\Factory($plan, $item_store, $hash_store);
+        $factory = new Factory($plan, $item_store, $hash_store);
         return new Harvester($factory);
     }
 }

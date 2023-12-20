@@ -4,7 +4,7 @@ namespace Harvest;
 
 class Util
 {
-    public static function generateHash($item)
+    public static function generateHash($item): string
     {
         return hash('sha256', serialize($item));
     }
