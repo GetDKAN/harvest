@@ -4,7 +4,7 @@ namespace Harvest;
 
 class ResultInterpreter
 {
-    private $result;
+    private array $result;
 
     public function __construct(array $result)
     {
@@ -28,7 +28,7 @@ class ResultInterpreter
         return $load_failures + $transform_failures;
     }
 
-    public function countProcessed()
+    public function countProcessed(): int
     {
 
         $ids = [];
@@ -39,7 +39,7 @@ class ResultInterpreter
 
         if (isset($this->result['status']['transform'])) {
             foreach (array_keys($this->result['status']['transform']) as $transformer) {
-                $ids = array_merge($ids, array_keys($this->result['status']['transform'][$transformer]));
+                $ids = [...$ids, ...array_keys($this->result['status']['transform'][$transformer])];
             }
         }
 
@@ -48,14 +48,14 @@ class ResultInterpreter
         return count($ids);
     }
 
-    private function loadCount($status)
+    private function loadCount(string $status)
     {
         $count = 0;
         if (!isset($this->result['status']['load'])) {
             return $count;
         }
 
-        foreach ($this->result['status']['load'] as $identifier => $stat) {
+        foreach ($this->result['status']['load'] as $stat) {
             if ($stat == $status) {
                 $count++;
             }
@@ -72,7 +72,7 @@ class ResultInterpreter
             return $count;
         }
 
-        foreach ($this->result['status']['transform'] as $transformer => $results) {
+        foreach ($this->result['status']['transform'] as $results) {
             foreach ($results as $result) {
                 if ($result == "FAILURE") {
                     $count++;
