@@ -6,7 +6,7 @@
     "require": {
         "php": ">7.3 <9.0",
         "ext-json": "*",
-        "getdkan/contracts": "^1.1.2",
+        "getdkan/contracts": "dev-no-contracts",
         "guzzlehttp/guzzle": "^6.5.8 || >7.4.5",
         "opis/json-schema": "^1.0.8"
     },
