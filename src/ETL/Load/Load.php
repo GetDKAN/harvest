@@ -3,8 +3,6 @@
 namespace Harvest\ETL\Load;
 
 use Harvest\Harvester;
-use Harvest\Log\MakeItLog;
-use Harvest\Storage\StorageInterface;
 use Harvest\Util;
 
 abstract class Load

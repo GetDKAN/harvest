@@ -2,7 +2,6 @@
 
 namespace Harvest;
 
-use Harvest\ETL\Transform\Transform;
 use Harvest\ETL\Factory;
 
 class Harvester
