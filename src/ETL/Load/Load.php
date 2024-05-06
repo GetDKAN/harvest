@@ -42,7 +42,7 @@ abstract class Load
         return $state;
     }
 
-    private function itemState($item)
+    private function itemState($item): int
     {
         if (isset($item->identifier)) {
             $identifier = Util::getDatasetId($item);

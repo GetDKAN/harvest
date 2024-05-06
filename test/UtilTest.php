@@ -2,8 +2,8 @@
 
 namespace HarvestTest;
 
-use Harvest\Util;
 use PHPUnit\Framework\TestCase;
+use Harvest\Util;
 
 class UtilTest extends TestCase
 {

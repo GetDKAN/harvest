@@ -33,7 +33,6 @@ return static function (RectorConfig $rectorConfig): void {
         RemoveUselessParamTagRector::class,
         RemoveUselessReturnTagRector::class,
         RemoveUselessVarTagRector::class,
-        ArrayShapeFromConstantArrayReturnRector::class,
         AddMethodCallBasedStrictParamTypeRector::class,
     ]);
 
