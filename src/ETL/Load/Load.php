@@ -24,7 +24,7 @@ abstract class Load
         $this->itemStorage = $item_storage;
     }
 
-    public function run($item)
+    public function run($item): int
     {
 
         $state = $this->itemState($item);

@@ -11,17 +11,17 @@ class ResultInterpreter
         $this->result = $result;
     }
 
-    public function countCreated()
+    public function countCreated(): int
     {
         return $this->loadCount("NEW");
     }
 
-    public function countUpdated()
+    public function countUpdated(): int
     {
         return $this->loadCount("UPDATED");
     }
 
-    public function countFailed()
+    public function countFailed(): int
     {
         $load_failures = $this->loadCount("FAILURE");
         $transform_failures = $this->transformFailures();
