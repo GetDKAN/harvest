@@ -2,7 +2,6 @@
 
 namespace Harvest;
 
-use Harvest\ETL\Transform\Transform;
 use Harvest\ETL\Factory;
 
 class Harvester
@@ -18,7 +17,7 @@ class Harvester
         $this->factory = $factory;
     }
 
-    public function revert()
+    public function revert(): int
     {
         $ids = $this->factory->hashStorage->retrieveAll();
         $load = $this->factory->get("load");
@@ -37,7 +36,7 @@ class Harvester
         return $counter;
     }
 
-    public function harvest()
+    public function harvest(): array
     {
         $result = [];
         $transformers = null;

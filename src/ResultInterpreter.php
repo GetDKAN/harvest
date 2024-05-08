@@ -11,17 +11,17 @@ class ResultInterpreter
         $this->result = $result;
     }
 
-    public function countCreated()
+    public function countCreated(): int
     {
         return $this->loadCount("NEW");
     }
 
-    public function countUpdated()
+    public function countUpdated(): int
     {
         return $this->loadCount("UPDATED");
     }
 
-    public function countFailed()
+    public function countFailed(): int
     {
         $load_failures = $this->loadCount("FAILURE");
         $transform_failures = $this->transformFailures();
@@ -48,7 +48,7 @@ class ResultInterpreter
         return count($ids);
     }
 
-    private function loadCount(string $status)
+    private function loadCount(string $status): int
     {
         $count = 0;
         if (!isset($this->result['status']['load'])) {
@@ -64,7 +64,7 @@ class ResultInterpreter
         return $count;
     }
 
-    private function transformFailures()
+    private function transformFailures(): int
     {
         $count = 0;
 
