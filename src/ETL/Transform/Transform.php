@@ -2,8 +2,6 @@
 
 namespace Harvest\ETL\Transform;
 
-use Harvest\Log\MakeItLog;
-
 abstract class Transform
 {
 
