@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
-use Rector\Core\ValueObject\PhpVersion;
 use Rector\DeadCode\Rector\ClassMethod\RemoveUselessParamTagRector;
 use Rector\DeadCode\Rector\ClassMethod\RemoveUselessReturnTagRector;
 use Rector\DeadCode\Rector\Property\RemoveUselessVarTagRector;
@@ -14,29 +13,29 @@ use Rector\TypeDeclaration\Rector\ClassMethod\ArrayShapeFromConstantArrayReturnR
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->paths([
-      __DIR__ . '/src',
-      __DIR__ . '/test',
-      __DIR__ . 'rector.php',
+        __DIR__ . '/src',
+        __DIR__ . '/test',
+        __DIR__ . 'rector.php',
     ]);
 
     $rectorConfig->sets([
-      SetList::PHP_74,
-      // Please no dead code or unneeded variables.
-      SetList::DEAD_CODE,
-      // Try to figure out type hints.
-      SetList::TYPE_DECLARATION,
+        SetList::PHP_74,
+        // Please no dead code or unneeded variables.
+        SetList::DEAD_CODE,
+        // Try to figure out type hints.
+        SetList::TYPE_DECLARATION,
     ]);
 
     $rectorConfig->skip([
-      // Don't throw errors on JSON parse problems. Yet.
-      // @todo Throw errors and deal with them appropriately.
-      JsonThrowOnErrorRector::class,
-      // We like our tags. Please don't remove them.
-      RemoveUselessParamTagRector::class,
-      RemoveUselessReturnTagRector::class,
-      RemoveUselessVarTagRector::class,
-      ArrayShapeFromConstantArrayReturnRector::class,
-      AddMethodCallBasedStrictParamTypeRector::class,
+        // Don't throw errors on JSON parse problems. Yet.
+        // @todo Throw errors and deal with them appropriately.
+        JsonThrowOnErrorRector::class,
+        // We like our tags. Please don't remove them.
+        RemoveUselessParamTagRector::class,
+        RemoveUselessReturnTagRector::class,
+        RemoveUselessVarTagRector::class,
+        ArrayShapeFromConstantArrayReturnRector::class,
+        AddMethodCallBasedStrictParamTypeRector::class,
     ]);
 
     $rectorConfig->removeUnusedImports();
