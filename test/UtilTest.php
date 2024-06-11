@@ -4,7 +4,6 @@ namespace HarvestTest;
 
 use PHPUnit\Framework\TestCase;
 use Harvest\Util;
-
 class UtilTest extends TestCase
 {
     public function test(): void
