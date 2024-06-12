@@ -3,6 +3,7 @@
 namespace Harvest\ETL\Extract;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 use Harvest\Util;
 
 class DataJson extends Extract
@@ -17,11 +18,11 @@ class DataJson extends Extract
     /**
      * Inject the guzzle client.
      *
-     * @var \GuzzleHttp\Client
+     * @var \GuzzleHttp\ClientInterface
      */
     protected $client;
 
-    public function __construct(object $harvest_plan, Client $client = null)
+    public function __construct(object $harvest_plan, ClientInterface $client = null)
     {
         $this->client = $client ?? new Client();
         $this->harvest_plan = $harvest_plan;
