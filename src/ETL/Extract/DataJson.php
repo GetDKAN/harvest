@@ -63,7 +63,7 @@ class DataJson extends Extract
     /**
      * Make the HTTP request to get harvest data.
      *
-     * @param mixed $uri
+     * @param string $uri
      *   URI for request.
      *
      * @return string
