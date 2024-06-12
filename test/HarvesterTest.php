@@ -35,7 +35,16 @@ class HarvesterTest extends TestCase
         $item_store = new MemStore();
         $hash_store = new MemStore();
 
-        $harvester = $this->getHarvester($plan, $item_store, $hash_store);
+        $mock_client = $this->createMock(\GuzzleHttp\Client::class);
+        $mock_client->method('request')->willReturn(
+            new \GuzzleHttp\Psr7\Response(
+                200,
+                [],
+                file_get_contents(__DIR__ . "/json/data3.json")
+            )
+        );
+
+        $harvester = $this->getHarvester($plan, $item_store, $hash_store, $mock_client);
 
         $result = $harvester->harvest();
 
@@ -101,7 +110,7 @@ class HarvesterTest extends TestCase
         return json_decode($content);
     }
 
-    private function getHarvester($plan, $item_store = null, $hash_store = null): Harvester
+    private function getHarvester($plan, $item_store = null, $hash_store = null, $client = null): Harvester
     {
 
         if (!isset($item_store)) {
@@ -112,7 +121,7 @@ class HarvesterTest extends TestCase
             $hash_store = new MemStore();
         }
 
-        $factory = new Factory($plan, $item_store, $hash_store);
+        $factory = new Factory($plan, $item_store, $hash_store, $client);
         return new Harvester($factory);
     }
 }

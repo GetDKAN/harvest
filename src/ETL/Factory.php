@@ -11,17 +11,20 @@ class Factory
     public $harvestPlan;
     public $itemStorage;
     public $hashStorage;
+    protected $client;
 
     public function __construct(
         $harvest_plan,
         $item_storage,
-        $hash_storage
+        $hash_storage,
+        $client = null
     ) {
         if (self::validateHarvestPlan($harvest_plan)) {
             $this->harvestPlan = $harvest_plan;
         }
         $this->itemStorage = $item_storage;
         $this->hashStorage = $hash_storage;
+        $this->client = $client;
     }
 
     public function get($type)
@@ -34,7 +37,7 @@ class Factory
                 throw new \Exception("Class {$class} does not exist");
             }
 
-            return new $class($this->harvestPlan);
+            return new $class($this->harvestPlan, $this->client);
         } elseif ($type == "load") {
             $class = $this->harvestPlan->load->type;
 
