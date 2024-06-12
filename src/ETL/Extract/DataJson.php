@@ -71,7 +71,7 @@ class DataJson extends Extract
     private function httpRequest(string $uri): string
     {
         try {
-            $res = $this->client->get($uri);
+            $res = $this->client->request('GET', $uri);
             return (string) $res->getBody();
         } catch (\Exception $exception) {
             throw new \Exception("Error reading {$uri}");

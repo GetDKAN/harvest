@@ -36,7 +36,7 @@ class HarvesterTest extends TestCase
         $hash_store = new MemStore();
 
         $mock_client = $this->createMock(\GuzzleHttp\Client::class);
-        $mock_client->method('get')->willReturn(
+        $mock_client->method('request')->willReturn(
             new \GuzzleHttp\Psr7\Response(
                 200,
                 [],
