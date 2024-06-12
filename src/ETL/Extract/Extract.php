@@ -5,7 +5,7 @@ namespace Harvest\ETL\Extract;
 abstract class Extract implements IExtract
 {
 
-  /**
+   /**
    * {@inheritDoc}
    */
     public function run(): array

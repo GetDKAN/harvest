@@ -3,20 +3,36 @@
 namespace Harvest\ETL\Extract;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 use Harvest\Util;
 
 class DataJson extends Extract
 {
-
+    /**
+     * Harvest Plan, decoded JSON object.
+     *
+     * @var object
+     */
     protected $harvest_plan;
 
-    public function __construct($harvest_plan)
+    /**
+     * Inject the guzzle client.
+     *
+     * @var \GuzzleHttp\ClientInterface
+     */
+    protected $client;
+
+    public function __construct(object $harvest_plan, ClientInterface $client = null)
     {
+        $this->client = $client ?? new Client();
         $this->harvest_plan = $harvest_plan;
     }
 
     /**
-     * @return array<string, mixed>
+     * Get the items to be harvested.
+     *
+     * @return array
+     *   The items to be harvested.
      */
     public function getItems(): array
     {
@@ -44,11 +60,19 @@ class DataJson extends Extract
         return $datasets;
     }
 
-    private function httpRequest($uri)
+    /**
+     * Make the HTTP request to get harvest data.
+     *
+     * @param string $uri
+     *   URI for request.
+     *
+     * @return string
+     *   The response body.
+     */
+    private function httpRequest(string $uri): string
     {
         try {
-            $client = new Client();
-            $res = $client->get($uri);
+            $res = $this->client->request('GET', $uri);
             return (string) $res->getBody();
         } catch (\Exception $exception) {
             throw new \Exception("Error reading {$uri}");
