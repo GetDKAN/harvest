@@ -24,7 +24,7 @@ abstract class Load
         $this->itemStorage = $item_storage;
     }
 
-    public function run($item)
+    public function run($item): int
     {
 
         $state = $this->itemState($item);
@@ -42,7 +42,7 @@ abstract class Load
         return $state;
     }
 
-    private function itemState($item)
+    private function itemState($item): int
     {
         if (isset($item->identifier)) {
             $identifier = Util::getDatasetId($item);

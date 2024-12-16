@@ -2,6 +2,8 @@
 
 namespace HarvestTest;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use Harvest\ResultInterpreter;
 use Harvest\ETL\Factory;
@@ -35,9 +37,9 @@ class HarvesterTest extends TestCase
         $item_store = new MemStore();
         $hash_store = new MemStore();
 
-        $mock_client = $this->createMock(\GuzzleHttp\Client::class);
+        $mock_client = $this->createMock(Client::class);
         $mock_client->method('request')->willReturn(
-            new \GuzzleHttp\Psr7\Response(
+            new Response(
                 200,
                 [],
                 file_get_contents(__DIR__ . "/json/data3.json")

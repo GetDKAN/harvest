@@ -2,8 +2,8 @@
 
 namespace Harvest\ETL;
 
-use Opis\JsonSchema\Validator;
 use Opis\JsonSchema\Schema;
+use Opis\JsonSchema\Validator;
 
 class Factory
 {
