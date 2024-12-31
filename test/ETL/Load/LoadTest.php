@@ -58,7 +58,7 @@ class LoadTest extends TestCase
             ])
             ->getMockForAbstractClass();
 
-        // Finally assert that our data has the correct hash. You can make this
+        // Finally assert that our data has a matching hash. You can make this
         // test fail by changing the 'something' => 'else' data, resulting in
         // a different hash.
         $this->assertEquals(

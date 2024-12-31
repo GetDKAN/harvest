@@ -15,8 +15,8 @@ class UtilTest extends TestCase
 {
     public function test(): void
     {
-        $fake_dataset = "Not an object";
-        $this->expectExceptionMessage("The dataset " . json_encode($fake_dataset) . " is not an object.");
+        $fake_dataset = 'Not an object';
+        $this->expectExceptionMessage('The dataset ' . json_encode($fake_dataset) . ' is not an object.');
         Util::getDatasetId($fake_dataset);
     }
 
@@ -24,12 +24,12 @@ class UtilTest extends TestCase
     {
         return [
             'same_shallow_values' => [
-                (object) ["key_a" => "value", "key_b" => "value"],
-                (object) ["key_b" => "value", "key_a"=> "value"],
+                (object) ['key_a' => 'value', 'key_b' => 'value'],
+                (object) ['key_b' => 'value', 'key_a'=> 'value'],
             ],
             'same_deep_values' => [
-                ["key_a" => "value", "key_b" => ["deep_1" => "value1", "deep_2" => "value2"]],
-                ["key_b" => ["deep_2" => "value2", "deep_1" => "value1"], "key_a"=> "value"],
+                ['key_a' => 'value', 'key_b' => ['deep_1' => 'value1', 'deep_2' => 'value2']],
+                ['key_b' => ['deep_2' => 'value2', 'deep_1' => 'value1'], 'key_a'=> 'value'],
             ],
         ];
     }
