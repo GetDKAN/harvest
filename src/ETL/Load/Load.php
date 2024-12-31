@@ -26,7 +26,6 @@ abstract class Load
 
     public function run($item): int
     {
-
         $state = $this->itemState($item);
 
         if ($state == Harvester::HARVEST_LOAD_NEW_ITEM || $state == Harvester::HARVEST_LOAD_UPDATED_ITEM) {
@@ -35,38 +34,57 @@ abstract class Load
             $identifier = Util::getDatasetId($item);
 
             $hash = Util::generateHash($item);
-            $object = (object) ['harvest_plan_id' => $this->harvestPlan->identifier, "hash" => $hash];
+            $object = (object) [
+                'harvest_plan_id' => $this->harvestPlan->identifier,
+                'hash' => $hash
+            ];
             $this->hashStorage->store(json_encode($object), $identifier);
         }
 
         return $state;
     }
 
+    /**
+     * Determine what to do next for the item, based on hash comparison.
+     *
+     * @param $item
+     *   The item we're dealing with, as an arbitrary data structure.
+     *
+     * @return int
+     *   One of the various Harvester constants.
+     *
+     * @see \Harvest\Harvester
+     */
     private function itemState($item): int
     {
         if (isset($item->identifier)) {
-            $identifier = Util::getDatasetId($item);
-
-            $json = $this->hashStorage->retrieve($identifier);
-
+            // Load the hash from storage, for comparison, if it exists.
             $hash = null;
-            if (isset($json)) {
-                $data = json_decode($json);
-                $hash = $data->hash;
+            if ($hash_json = $this->hashStorage->retrieve(Util::getDatasetId($item))) {
+                $hash_object = json_decode($hash_json);
+                $hash = $hash_object->hash ?? null;
             }
 
-            if (isset($hash)) {
-                $new_hash = Util::generateHash($item);
-                if ($hash == $new_hash) {
+            if ($hash) {
+                if ($hash === Util::generateHash($item)) {
+                    // Hashes matched, so no change.
                     return Harvester::HARVEST_LOAD_UNCHANGED;
                 } else {
+                    // Hashes don't match, so try again with the legacy hash
+                    // generator. This might match if the hash was generated
+                    // before we changed the hashing system.
+                    if ($hash === Util::legacyGenerateHash($item)) {
+                        return Harvester::HARVEST_LOAD_UNCHANGED;
+                    }
+                    // We do have a past hash record, but neither new nor
+                    // legacy hash matched, so update the dataset.
                     return Harvester::HARVEST_LOAD_UPDATED_ITEM;
                 }
-            } else {
-                return Harvester::HARVEST_LOAD_NEW_ITEM;
             }
-        } else {
-            throw new \Exception("Item does not have an identifier " . json_encode($item));
+            // There was no existing hash in storage, so this is a new
+            // item.
+            return Harvester::HARVEST_LOAD_NEW_ITEM;
         }
+        throw new \Exception('Item does not have an identifier ' . json_encode($item));
     }
 }
