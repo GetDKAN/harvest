@@ -69,4 +69,22 @@ class LoadTest extends TestCase
             ])
         );
     }
+
+    /**
+     * @covers ::itemState
+     */
+    public function testItemStateException()
+    {
+        // The itemState() method should throw an exception if the item does
+        // not have an identifier. This should make its way back through run()
+        // to the caller.
+        $load = $this->getMockBuilder(Load::class)
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Item does not have an identifier');
+
+        $load->run((object) ['no_identifier' => '']);
+    }
 }
