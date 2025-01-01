@@ -55,7 +55,7 @@ abstract class Load
      *
      * @see \Harvest\Harvester
      */
-    private function itemState($item): int
+    protected function itemState($item): int
     {
         if (isset($item->identifier)) {
             // Load the hash from storage, for comparison, if it exists.

@@ -73,7 +73,7 @@ class LoadTest extends TestCase
     /**
      * @covers ::itemState
      */
-    public function testItemStateException()
+    public function testItemStateException(): void
     {
         // The itemState() method should throw an exception if the item does
         // not have an identifier. This should make its way back through run()
