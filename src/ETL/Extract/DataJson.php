@@ -22,7 +22,7 @@ class DataJson extends Extract
      */
     protected $client;
 
-    public function __construct(object $harvest_plan, ClientInterface $client = null)
+    public function __construct(object $harvest_plan, ?ClientInterface $client = null)
     {
         $this->client = $client ?? new Client();
         $this->harvest_plan = $harvest_plan;
