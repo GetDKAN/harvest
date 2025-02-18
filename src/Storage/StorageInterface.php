@@ -22,7 +22,7 @@ interface StorageInterface
      * @throws \Exception
      *   Issues storing the data.
      */
-    public function store($data, string $id = null): string;
+    public function store($data, ?string $id = null): string;
 
     /**
      * Retrieve all.
